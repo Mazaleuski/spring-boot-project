@@ -1,8 +1,6 @@
 package by.teachmeskills.springbootproject.controllers;
 
 import by.teachmeskills.springbootproject.entities.Cart;
-import by.teachmeskills.springbootproject.services.CartService;
-import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +16,7 @@ import static by.teachmeskills.springbootproject.enums.PagesPathEnum.CART_PAGE;
 @RestController
 @RequestMapping("/cart")
 @SessionAttributes(CART)
-@AllArgsConstructor
 public class CartController {
-    private final CartService cartService;
 
     @GetMapping("/open")
     public ModelAndView openCartPage() {
@@ -29,12 +25,12 @@ public class CartController {
 
     @GetMapping("/add")
     public ModelAndView addProductToCart(@RequestParam(PRODUCT_ID) int id, @ModelAttribute(CART) Cart cart) {
-        return cartService.addProductToCart(id, cart);
+        return cart.addProductToCart(id, cart);
     }
 
     @GetMapping("/delete")
     public ModelAndView removeProductFromCart(@RequestParam(PRODUCT_ID) int id, @ModelAttribute(CART) Cart cart) {
-        return cartService.removeProductFromCart(id, cart);
+        return cart.removeProductFromCart(id, cart);
     }
 
     @ModelAttribute(CART)
