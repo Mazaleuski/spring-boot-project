@@ -30,14 +30,6 @@
         </form>
     </div>
 </nav>
-<c:if test="${not empty info}">
-    <p style="text-align: center" class="text-danger">${info}</p>
-    <br>
-    <div class="container-fluid" style="text-align: center">
-        <a href="${contextPath}/login">
-            <button class="btn btn-outline-success" type="button">Вход</button>
-        </a></div>
-</c:if>
 <c:if test="${not empty user}">
     <div class="container-fluid" style="text-align: center">
         <p>Личные данные:</p>
@@ -52,27 +44,29 @@
     </div>
     <div class="container-fluid" style="text-align: center">
         <p>История заказов:</p>
-        <p>Дата заказа: ${date}</p>
-        <p>Номер заказа: ${number}</p>
         <c:if test="${not empty orders}">
-            <c:forEach items="${orders}" var="product">
-                <div class="card w-50 m-1" type="product">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col m-1">
-                                <img class="card-img"
-                                     style="width:70px;height:70px"
-                                     src="${contextPath}/images/mobile/${product.getImagePath()}"
-                                     alt=${product.getImagePath()}></div>
-                            <div class="col m-1" style="text-align: center">
-                                <p>${product.getName()}</p></div>
-                            <div class="col m-1" style="text-align: center">
-                                <p>${product.getDescription()}</p></div>
-                            <div class="col m-1" style="text-align: center">
-                                <p>${product.getPrice()}</p></div>
+            <c:forEach items="${orders}" var="order">
+                <p>Дата заказа: ${order.getDate()}</p>
+                <p>Номер заказа: ${order.getId()}</p>
+                <c:forEach items="${order.getProductList()}" var="product">
+                    <div class="card w-50 m-1" type="product">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col m-1">
+                                    <img class="card-img"
+                                         style="width:70px;height:70px"
+                                         src="${contextPath}/images/mobile/${product.getImagePath()}"
+                                         alt=${product.getImagePath()}></div>
+                                <div class="col m-1" style="text-align: center">
+                                    <p>${product.getName()}</p></div>
+                                <div class="col m-1" style="text-align: center">
+                                    <p>${product.getDescription()}</p></div>
+                                <div class="col m-1" style="text-align: center">
+                                    <p>${product.getPrice()}</p></div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </c:forEach>
             </c:forEach>
         </c:if>
     </div>

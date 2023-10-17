@@ -2,8 +2,10 @@ package by.teachmeskills.springbootproject.services;
 
 import by.teachmeskills.springbootproject.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+@Service
 @AllArgsConstructor
 public class StatisticService {
 

@@ -1,8 +1,6 @@
 package by.teachmeskills.springbootproject.entities;
 
-import by.teachmeskills.springbootproject.repositories.ProductRepository;
-import by.teachmeskills.springbootproject.repositories.impl.ProductRepositoryImpl;
-import org.springframework.jdbc.core.JdbcTemplate;
+import lombok.Data;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,10 +14,10 @@ import static by.teachmeskills.springbootproject.ShopConstants.PRODUCT;
 import static by.teachmeskills.springbootproject.enums.PagesPathEnum.CART_PAGE;
 import static by.teachmeskills.springbootproject.enums.PagesPathEnum.PRODUCT_PAGE;
 
+@Data
 public class Cart {
     private final Map<Integer, Product> products;
     private int totalPrice = 0;
-    private final ProductRepository productRepository = new ProductRepositoryImpl(new JdbcTemplate());
 
     public Cart() {
         this.products = new HashMap<>();
@@ -38,9 +36,8 @@ public class Cart {
         }
     }
 
-    public ModelAndView addProductToCart(int productId, Cart cart) {
+    public ModelAndView addProductToCart(Product product, Cart cart) {
         ModelMap modelParams = new ModelMap();
-        Product product = productRepository.findById(productId);
         cart.addProduct(product);
         modelParams.addAttribute(CART, cart);
         modelParams.addAttribute(PRODUCT, product);

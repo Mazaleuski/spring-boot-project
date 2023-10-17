@@ -1,10 +1,17 @@
 package by.teachmeskills.springbootproject.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
@@ -16,9 +23,18 @@ import java.util.List;
 @SuperBuilder
 @Builder
 @Data
+@Entity
+@Table(name = "orders")
 public class Order extends BaseEntity {
     private int price;
     private LocalDate date;
-    private int userId;
-    private List<Product> products;
+    @ManyToOne(optional = false)
+    private User user;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToMany
+    @JoinTable(name="orders_products", joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private List<Product> productList;
 }

@@ -1,8 +1,10 @@
 package by.teachmeskills.springbootproject.entities;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -13,12 +15,15 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @SuperBuilder
+@Entity
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Pattern(regexp = "[A-Za-z А-Яа-я]+", message = "Некорректное имя.")
@@ -43,4 +48,7 @@ public class User extends BaseEntity {
 
     @Pattern(regexp = "^\\+?[1-9][0-9]{11}$", message = "Некорректный номер телефона.")
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Order> order;
 }

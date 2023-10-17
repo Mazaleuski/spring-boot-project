@@ -1,35 +1,63 @@
 package by.teachmeskills.springbootproject.controllers;
 
-import by.teachmeskills.springbootproject.services.CategoryService;
+import by.teachmeskills.springbootproject.entities.SearchCriteria;
 import by.teachmeskills.springbootproject.services.ProductService;
 import lombok.AllArgsConstructor;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import static by.teachmeskills.springbootproject.ShopConstants.CATEGORIES;
-import static by.teachmeskills.springbootproject.enums.PagesPathEnum.SEARCH_PAGE;
+import static by.teachmeskills.springbootproject.ShopConstants.SEARCH_CRITERIA;
 
 @RestController
 @RequestMapping("/search")
 @AllArgsConstructor
+@SessionAttributes(SEARCH_CRITERIA)
 public class SearchController {
 
     private final ProductService productService;
-    private final CategoryService categoryService;
 
     @GetMapping
-    public ModelAndView openSearchPage() {
-        ModelMap model = new ModelMap();
-        model.addAttribute(CATEGORIES, categoryService.read());
-        return new ModelAndView(SEARCH_PAGE.getPath(), model);
+    public ModelAndView openSearchPage(@ModelAttribute(SEARCH_CRITERIA) SearchCriteria searchCriteria) {
+        searchCriteria.setSearchString("");
+        searchCriteria.setPaginationNumber(1);
+        return productService.findByNameOrDescription(searchCriteria);
     }
 
     @PostMapping
-    public ModelAndView search(String searchString) {
-        return productService.findByNameOrDescription(searchString);
+    public ModelAndView search(@RequestParam String searchString, @ModelAttribute(SEARCH_CRITERIA) SearchCriteria searchCriteria) {
+        searchCriteria.setSearchString(searchString);
+        searchCriteria.setPaginationNumber(1);
+        return productService.findByNameOrDescription(searchCriteria);
+    }
+
+    @GetMapping("next")
+    public ModelAndView openNextPage(@ModelAttribute(SEARCH_CRITERIA) SearchCriteria searchCriteria) {
+        searchCriteria.setPaginationNumber(searchCriteria.getPaginationNumber() + 1);
+        return productService.findByNameOrDescription(searchCriteria);
+    }
+
+    @GetMapping("previous")
+    public ModelAndView openPreviousPage(@ModelAttribute(SEARCH_CRITERIA) SearchCriteria searchCriteria) {
+        searchCriteria.setPaginationNumber(searchCriteria.getPaginationNumber() - 1);
+        return productService.findByNameOrDescription(searchCriteria);
+    }
+
+    @GetMapping("{pageNumber}")
+    public ModelAndView openPageNumber(@PathVariable int pageNumber, @ModelAttribute(SEARCH_CRITERIA) SearchCriteria searchCriteria) {
+        searchCriteria.setPaginationNumber(pageNumber);
+        return productService.findByNameOrDescription(searchCriteria);
+    }
+
+    @ModelAttribute(SEARCH_CRITERIA)
+    public SearchCriteria initSearchCriteria() {
+        return new SearchCriteria();
     }
 }
+

@@ -41,7 +41,8 @@
     </form>
     <p></p>
     <c:if test="${not empty info}">
-        <p style="text-align: center" class="text-danger">${info}</p><p></p>
+        <p style="text-align: center" class="text-danger">${info}</p>
+        <p></p>
     </c:if>
 </div>
 <br>
@@ -73,7 +74,8 @@
     </div>
     <div class="col" style="text-align: center">Результаты поиска:<br><br>
         <c:if test="${not empty message}">
-            <p style="text-align: center" class="text">${message}</p><p></p>
+            <p style="text-align: center" class="text">${message}</p>
+            <p></p>
         </c:if>
         <c:forEach items="${products}" var="product">
             <div class="card w-80 m-1" type="product">
@@ -107,16 +109,16 @@
 <ul class="pagination justify-content-end" style="margin:20px 0">
     <div class="dropdown">
         <button type="button" class="btn btn-outline-success m-1" data-toggle="dropdown">
-            Количество
+            Страница
         </button>
         <div class="dropdown-menu" style="color: black">
-            <a class="dropdown-item" href="#" style="color: black">10</a>
-            <a class="dropdown-item" href="#" style="color: black">20</a>
-            <a class="dropdown-item" href="#" style="color: black">50</a>
+            <a class="dropdown-item" href="${contextPath}/search/1" style="color: black">1</a>
+            <a class="dropdown-item" href="${contextPath}/search/2" style="color: black">2</a>
+            <a class="dropdown-item" href="${contextPath}/search/3" style="color: black">3</a>
         </div>
     </div>
-    <li class="page-item"><a class="btn btn-outline-success m-1" href="#"><</a></li>
-    <li class="page-item"><a class="btn btn-outline-success m-1" href="#">></a></li>
+    <li class="page-item"><a class="btn btn-outline-success m-1" href="${contextPath}/search/previous"><</a></li>
+    <li class="page-item"><a class="btn btn-outline-success m-1" href="${contextPath}/search/next">></a></li>
 </ul>
 </body>
 </html>

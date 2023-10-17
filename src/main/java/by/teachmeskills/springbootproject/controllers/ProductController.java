@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import static by.teachmeskills.springbootproject.ShopConstants.PRODUCT;
+import static by.teachmeskills.springbootproject.enums.PagesPathEnum.PRODUCT_PAGE;
+
 @RestController
 @RequestMapping("/products")
 @AllArgsConstructor
@@ -16,6 +19,8 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ModelAndView openProductPage(@PathVariable int id) {
-        return productService.findById(id);
+        ModelAndView modelAndView = new ModelAndView(PRODUCT_PAGE.getPath());
+        modelAndView.addObject(PRODUCT, productService.findById(id));
+        return modelAndView;
     }
 }
