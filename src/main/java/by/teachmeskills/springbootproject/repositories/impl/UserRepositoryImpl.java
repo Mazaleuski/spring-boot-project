@@ -4,11 +4,10 @@ import by.teachmeskills.springbootproject.entities.User;
 import by.teachmeskills.springbootproject.repositories.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,43 +26,36 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User findById(int id) {
-        Session session = entityManager.unwrap(Session.class);
-        return session.get(User.class, id);
+        return entityManager.find(User.class, id);
     }
 
     @Override
     public User findByEmailAndPassword(String email, String password) {
-        Session session = entityManager.unwrap(Session.class);
-        Query<User> query = session.createQuery(GET_USER_BY_EMAIL_AND_PASSWORD, User.class);
+        TypedQuery<User> query = entityManager.createQuery(GET_USER_BY_EMAIL_AND_PASSWORD, User.class);
         query.setParameter("email", email);
         query.setParameter("password", password);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
 
     @Override
     public User create(User entity) {
-        Session session = entityManager.unwrap(Session.class);
-        session.persist(entity);
+        entityManager.persist(entity);
         return entity;
     }
 
     @Override
     public List<User> read() {
-        Session session = entityManager.unwrap(Session.class);
-        return session.createQuery(GET_ALL_USERS, User.class).getResultList();
+        return entityManager.createQuery(GET_ALL_USERS, User.class).getResultList();
     }
 
     @Override
     public User update(User entity) {
-        Session session = entityManager.unwrap(Session.class);
-        session.merge(entity);
-        return entity;
+        return entityManager.merge(entity);
     }
 
     @Override
     public void delete(User entity) {
-        Session session = entityManager.unwrap(Session.class);
-        session.remove(entity);
+        entityManager.remove(entity);
     }
 }
 

@@ -7,7 +7,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,32 +24,27 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public Category findById(int id) {
-        Session session = entityManager.unwrap(Session.class);
-        return session.get(Category.class, id);
+        return entityManager.find(Category.class, id);
     }
 
     @Override
     public Category create(Category entity) {
-        Session session = entityManager.unwrap(Session.class);
-        session.persist(entity);
+        entityManager.persist(entity);
         return entity;
     }
 
     @Override
     public List<Category> read() {
-        Session session = entityManager.unwrap(Session.class);
-        return session.createQuery(GET_ALL_CATEGORIES, Category.class).getResultList();
+        return entityManager.createQuery(GET_ALL_CATEGORIES, Category.class).getResultList();
     }
 
     @Override
     public Category update(Category entity) {
-        Session session = entityManager.unwrap(Session.class);
-        return session.merge(entity);
+        return entityManager.merge(entity);
     }
 
     @Override
     public void delete(Category entity) {
-        Session session = entityManager.unwrap(Session.class);
-        session.remove(entity);
+        entityManager.remove(entity);
     }
 }
