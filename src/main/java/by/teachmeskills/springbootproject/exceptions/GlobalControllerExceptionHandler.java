@@ -22,4 +22,15 @@ public class GlobalControllerExceptionHandler {
         model.addAllObjects(modelMap);
         return model;
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(CartIsEmptyException.class)
+    public ModelAndView handleCartException(Exception e) {
+        ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute(ERROR, e.getMessage());
+        ModelAndView model = new ModelAndView();
+        model.setViewName(ERROR_PAGE.getPath());
+        model.addAllObjects(modelMap);
+        return model;
+    }
 }

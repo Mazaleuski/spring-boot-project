@@ -1,8 +1,7 @@
 package by.teachmeskills.springbootproject.services.impl;
 
-import by.teachmeskills.springbootproject.ShopConstants;
 import by.teachmeskills.springbootproject.entities.Product;
-import by.teachmeskills.springbootproject.enums.PagesPathEnum;
+import by.teachmeskills.springbootproject.entities.SearchCriteria;
 import by.teachmeskills.springbootproject.repositories.ProductRepository;
 import by.teachmeskills.springbootproject.services.CategoryService;
 import by.teachmeskills.springbootproject.services.ProductService;
@@ -40,15 +39,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void delete(int id) {
-        productRepository.delete(id);
+    public void delete(Product entity) {
+        productRepository.delete(entity);
     }
 
     @Override
-    public ModelAndView findById(int id) {
-        ModelAndView modelAndView = new ModelAndView(PagesPathEnum.PRODUCT_PAGE.getPath());
-        modelAndView.addObject(ShopConstants.PRODUCT, productRepository.findById(id));
-        return modelAndView;
+    public Product findById(int id) {
+        return productRepository.findById(id);
     }
 
     @Override
@@ -57,13 +54,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ModelAndView findByNameOrDescription(String search) {
+    public ModelAndView findByNameOrDescription(SearchCriteria searchCriteria) {
+        if (searchCriteria.getPaginationNumber() < 1) {
+            searchCriteria.setPaginationNumber(1);
+        }
         ModelMap modelParam = new ModelMap();
         modelParam.addAttribute(CATEGORIES, categoryService.read());
-        if (search.length() < 3) {
+        if (searchCriteria.getSearchString().length() < 3) {
             modelParam.addAttribute("info", "Не менее трех символов для поиска!");
         } else {
-            List<Product> productList = productRepository.findByNameOrDescription(search);
+            List<Product> productList = productRepository.findByNameOrDescription(searchCriteria);
             if (productList.size() != 0) {
                 modelParam.addAttribute(PRODUCTS, productList);
             } else {

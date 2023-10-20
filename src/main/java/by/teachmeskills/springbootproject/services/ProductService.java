@@ -1,14 +1,15 @@
 package by.teachmeskills.springbootproject.services;
 
 import by.teachmeskills.springbootproject.entities.Product;
+import by.teachmeskills.springbootproject.entities.SearchCriteria;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
 public interface ProductService extends BaseService<Product> {
-    ModelAndView findById(int id);
+    Product findById(int id);
 
     List<Product> findByCategoryId(int id);
 
-    ModelAndView findByNameOrDescription(String search);
+    ModelAndView findByNameOrDescription(SearchCriteria searchCriteria);
 }

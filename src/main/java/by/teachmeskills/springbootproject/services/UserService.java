@@ -10,6 +10,4 @@ public interface UserService extends BaseService<User> {
     User findById(int id);
 
     ModelAndView authenticate(User user) throws AuthorizationException;
-
-    ModelAndView findUserOrders(User user);
 }

@@ -1,11 +1,15 @@
 package by.teachmeskills.springbootproject.repositories.impl;
 
 import by.teachmeskills.springbootproject.entities.Product;
+import by.teachmeskills.springbootproject.entities.SearchCriteria;
 import by.teachmeskills.springbootproject.repositories.ProductRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,53 +17,64 @@ import java.util.List;
 @Repository
 @Slf4j
 @AllArgsConstructor
+@Transactional
 public class ProductRepositoryImpl implements ProductRepository {
 
-    private static final String GET_PRODUCTS_BY_CATEGORY_ID = "SELECT * FROM products WHERE categoryId=?";
-    private static final String GET_PRODUCT_BY_ID = "SELECT * FROM products WHERE id=?";
-    private final static String DELETE_PRODUCT_BY_ID = "DELETE FROM products WHERE id = ?";
-    private final static String GET_ALL_PRODUCTS = "SELECT * FROM products";
-    private final static String UPDATE_DESCRIPTION_AND_PRICE_BY_ID = "UPDATE products SET description = ?, price = ? WHERE id = ?";
-    private static final String ADD_PRODUCT = "INSERT INTO products (name,description,price,categoryId,imagePath) values (?,?,?,?,?)";
-    private static final String GET_PRODUCT_BY_NAME_OR_DESCRIPTION = "SELECT * FROM products WHERE name LIKE ? OR description LIKE ? ORDER BY name ASC;";
+    @PersistenceContext
+    private final EntityManager entityManager;
 
-    private final JdbcTemplate jdbcTemplate;
+    private static final String GET_ALL_PRODUCTS = "select p from Product p";
+    private static final String GET_PRODUCT_BY_NAME_OR_DESCRIPTION =
+            "from Product where name like :search or description like :search";
+    private static final String GET_PRODUCTS_BY_CATEGORY_ID = "select p from Product p where p.category.id=:categoryId";
+
+    @Override
+    public Product findById(int id) {
+        Session session = entityManager.unwrap(Session.class);
+        return session.get(Product.class, id);
+    }
+
+    @Override
+    public List<Product> findByCategoryId(int id) {
+        Session session = entityManager.unwrap(Session.class);
+        Query<Product> query = session.createQuery(GET_PRODUCTS_BY_CATEGORY_ID, Product.class);
+        query.setParameter("categoryId", id);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Product> findByNameOrDescription(SearchCriteria searchCriteria) {
+        Session session = entityManager.unwrap(Session.class);
+        Query<Product> query = session.createQuery(GET_PRODUCT_BY_NAME_OR_DESCRIPTION, Product.class);
+        query.setParameter("search", "%" + searchCriteria.getSearchString().toLowerCase() + "%");
+        query.setFirstResult((searchCriteria.getPaginationNumber() - 1) * 2);
+        query.setMaxResults(2);
+        return query.getResultList();
+    }
 
     @Override
     public Product create(Product entity) {
-        jdbcTemplate.update(ADD_PRODUCT, entity.getName(), entity.getDescription(), entity.getPrice(), entity.getCategoryId(), entity.getImagePath());
+        Session session = entityManager.unwrap(Session.class);
+        session.persist(entity);
         return entity;
     }
 
     @Override
     public List<Product> read() {
-        return jdbcTemplate.query(GET_ALL_PRODUCTS, new BeanPropertyRowMapper<>(Product.class));
+        Session session = entityManager.unwrap(Session.class);
+        return session.createQuery(GET_ALL_PRODUCTS, Product.class).getResultList();
     }
 
     @Override
     public Product update(Product entity) {
-        jdbcTemplate.update(UPDATE_DESCRIPTION_AND_PRICE_BY_ID, entity.getDescription(), entity.getPrice(), entity.getId());
+        Session session = entityManager.unwrap(Session.class);
+        session.merge(entity);
         return entity;
     }
 
     @Override
-    public void delete(int id) {
-        jdbcTemplate.update(DELETE_PRODUCT_BY_ID, id);
-    }
-
-    @Override
-    public Product findById(int id) {
-        return jdbcTemplate.queryForObject(GET_PRODUCT_BY_ID, new BeanPropertyRowMapper<>(Product.class), id);
-    }
-
-    @Override
-    public List<Product> findByCategoryId(int id) {
-        return jdbcTemplate.query(GET_PRODUCTS_BY_CATEGORY_ID, new BeanPropertyRowMapper<>(Product.class), id);
-    }
-
-    @Override
-    public List<Product> findByNameOrDescription(String search) {
-        search = "%" + search.trim() + "%";
-        return jdbcTemplate.query(GET_PRODUCT_BY_NAME_OR_DESCRIPTION, new BeanPropertyRowMapper<>(Product.class), search);
+    public void delete(Product entity) {
+        Session session = entityManager.unwrap(Session.class);
+        session.remove(entity);
     }
 }
