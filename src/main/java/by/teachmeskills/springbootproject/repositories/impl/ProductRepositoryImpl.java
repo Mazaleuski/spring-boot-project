@@ -5,11 +5,10 @@ import by.teachmeskills.springbootproject.entities.SearchCriteria;
 import by.teachmeskills.springbootproject.repositories.ProductRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,22 +29,19 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Product findById(int id) {
-        Session session = entityManager.unwrap(Session.class);
-        return session.get(Product.class, id);
+        return entityManager.find(Product.class, id);
     }
 
     @Override
     public List<Product> findByCategoryId(int id) {
-        Session session = entityManager.unwrap(Session.class);
-        Query<Product> query = session.createQuery(GET_PRODUCTS_BY_CATEGORY_ID, Product.class);
+        TypedQuery<Product> query = entityManager.createQuery(GET_PRODUCTS_BY_CATEGORY_ID, Product.class);
         query.setParameter("categoryId", id);
         return query.getResultList();
     }
 
     @Override
     public List<Product> findByNameOrDescription(SearchCriteria searchCriteria) {
-        Session session = entityManager.unwrap(Session.class);
-        Query<Product> query = session.createQuery(GET_PRODUCT_BY_NAME_OR_DESCRIPTION, Product.class);
+        TypedQuery<Product> query = entityManager.createQuery(GET_PRODUCT_BY_NAME_OR_DESCRIPTION, Product.class);
         query.setParameter("search", "%" + searchCriteria.getSearchString().toLowerCase() + "%");
         query.setFirstResult((searchCriteria.getPaginationNumber() - 1) * 2);
         query.setMaxResults(2);
@@ -54,27 +50,22 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Product create(Product entity) {
-        Session session = entityManager.unwrap(Session.class);
-        session.persist(entity);
+        entityManager.persist(entity);
         return entity;
     }
 
     @Override
     public List<Product> read() {
-        Session session = entityManager.unwrap(Session.class);
-        return session.createQuery(GET_ALL_PRODUCTS, Product.class).getResultList();
+        return entityManager.createQuery(GET_ALL_PRODUCTS, Product.class).getResultList();
     }
 
     @Override
     public Product update(Product entity) {
-        Session session = entityManager.unwrap(Session.class);
-        session.merge(entity);
-        return entity;
+        return entityManager.merge(entity);
     }
 
     @Override
     public void delete(Product entity) {
-        Session session = entityManager.unwrap(Session.class);
-        session.remove(entity);
+        entityManager.remove(entity);
     }
 }
