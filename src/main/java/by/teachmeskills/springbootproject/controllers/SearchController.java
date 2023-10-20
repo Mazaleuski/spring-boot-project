@@ -25,15 +25,12 @@ public class SearchController {
 
     @GetMapping
     public ModelAndView openSearchPage(@ModelAttribute(SEARCH_CRITERIA) SearchCriteria searchCriteria) {
-        searchCriteria.setSearchString("");
-        searchCriteria.setPaginationNumber(1);
         return productService.findByNameOrDescription(searchCriteria);
     }
 
     @PostMapping
     public ModelAndView search(@RequestParam String searchString, @ModelAttribute(SEARCH_CRITERIA) SearchCriteria searchCriteria) {
         searchCriteria.setSearchString(searchString);
-        searchCriteria.setPaginationNumber(1);
         return productService.findByNameOrDescription(searchCriteria);
     }
 
