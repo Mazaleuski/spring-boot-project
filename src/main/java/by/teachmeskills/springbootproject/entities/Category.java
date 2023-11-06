@@ -1,5 +1,6 @@
 package by.teachmeskills.springbootproject.entities;
 
+import com.opencsv.bean.CsvBindByName;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -21,10 +22,17 @@ import java.util.List;
 @Entity
 @Table(name = "categories")
 public class Category extends BaseEntity {
+
+    @CsvBindByName
     private String name;
+
+    @CsvBindByName
     private String imagePath;
+
+    @CsvBindByName
     private int rating;
-    @OneToMany(mappedBy = "category", orphanRemoval = true,cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "category", orphanRemoval = true, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Product> productList;

@@ -11,4 +11,6 @@ public interface ProductRepository extends BaseRepository<Product> {
     List<Product> findByCategoryId(int id);
 
     List<Product> findByNameOrDescription(SearchCriteria searchCriteria);
+
+    Product findByName(String name);
 }
