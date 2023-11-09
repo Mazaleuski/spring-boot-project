@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Кабинет</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-light">
+    <div class="container-fluid">
+        <div class="files">
+            <form th:method="POST" th:action="@{/account/upload}" enctype="multipart/form-data"
+                  class="file-import">
+                <label class="label">
+                    <input id="file" name="file" type="file" class="title" accept=".csv">
+                </label>
+                <br>
+                <button type="submit" class="btn btn-outline-success m-1">Добавить из файла
+                </button>
+            </form>
+            <a th:href="@{/account/download}">
+                <button class="btn btn-outline-success m-1" type="button">Загрузить в файл</button>
+            </a>
+        </div>
+        <form class="form-inline my-2 my-lg-0">
+            <a th:href="@{/home}">
+                <button class="btn btn-outline-success m-1" type="button">Главная</button>
+            </a>
+            <a th:href="@{/account}">
+                <button class="btn btn-outline-success m-1" type="button">Кабинет</button>
+            </a>
+            <a th:href="@{/cart/open}">
+                <button class="btn btn-outline-success m-1" type="button">Корзина</button>
+            </a>
+        </form>
+    </div>
+</nav>
+<div th:test="${user}!=null">
+    <div class="container-fluid" style="text-align: center">
+        <p>Личные данные:</p>
+        <div class="row">
+            <div class="col m-1" style="text-align: right">
+                <p th:text="'Имя пользователя: '+ ${user.getName()}"></p>
+                <p th:text="'Фамилия пользователя: '+ ${user.getSurname()}"></p></div>
+            <div class="col m-1" style="text-align: left">
+                <p th:text="'Дата рождения: '+ ${user.getBirthday()}"></p>
+                <p th:text="'Почта: '+ ${user.getEmail()}"></p></div>
+        </div>
+    </div>
+    <div class="container-fluid" style="text-align: center">
+        <p>История заказов:</p>
+        <div th:test="${orders}!=null">
+            <div th:each="o: ${orders}">
+                <p th:text="'Дата заказа: '+${o.getDate()}"></p>
+                <p th:text="'Номер заказа: '+${o.getId()}"></p>
+                <div th:each="p:${o.getProductList()}">
+                    <div class="card w-50 m-1">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col m-1">
+                                    <img class="card-img"
+                                         style="width:70px;height:70px"
+                                         th:src="@{${'/images/' + p.imagePath}}"
+                                         alt="Product image"></div>
+                                <div class="col m-1" style="text-align: center">
+                                    <p th:text="${p.getName()}"></p></div>
+                                <div class="col m-1" style="text-align: center">
+                                    <p th:text="${p.getDescription()}"></p></div>
+                                <div class="col m-1" style="text-align: center">
+                                    <p th:text="${p.getPrice()}"></p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

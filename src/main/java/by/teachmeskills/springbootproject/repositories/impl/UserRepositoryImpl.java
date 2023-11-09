@@ -3,6 +3,7 @@ package by.teachmeskills.springbootproject.repositories.impl;
 import by.teachmeskills.springbootproject.entities.User;
 import by.teachmeskills.springbootproject.repositories.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
@@ -34,7 +35,12 @@ public class UserRepositoryImpl implements UserRepository {
         TypedQuery<User> query = entityManager.createQuery(GET_USER_BY_EMAIL_AND_PASSWORD, User.class);
         query.setParameter("email", email);
         query.setParameter("password", password);
-        return query.getSingleResult();
+        User user = null;
+        try {
+            user = query.getSingleResult();
+        } catch (NoResultException ignored) {
+        }
+        return user;
     }
 
     @Override

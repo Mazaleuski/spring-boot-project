@@ -35,10 +35,10 @@ CREATE TABLE `shop_hib`.`categories`
 DROP TABLE IF EXISTS `shop_hib`.`orders`;
 CREATE TABLE `shop_hib`.`orders`
 (
-    `id`      INT      NOT NULL AUTO_INCREMENT,
-    `date`    DATETIME NOT NULL,
-    `user_id` INT      NOT NULL,
-    `price`   INT      NOT NULL,
+    `id`      INT  NOT NULL AUTO_INCREMENT,
+    `date`    DATE NOT NULL,
+    `user_id` INT  NOT NULL,
+    `price`   INT  NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id` (`id` ASC),
     CONSTRAINT fk_orders_user_id_users_id
@@ -62,28 +62,6 @@ CREATE TABLE `shop_hib`.`products`
     CONSTRAINT fk_products_category_id_categories_id
         FOREIGN KEY (`category_id`)
             REFERENCES `shop_hib`.`categories` (`id`)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE
-);
-
-DROP TABLE IF EXISTS `shop_hib`.`images`;
-CREATE TABLE `shop_hib`.`images`
-(
-    `id`          INT         NOT NULL AUTO_INCREMENT,
-    `image_path`  VARCHAR(45) NOT NULL,
-    `category_id` INT         NULL,
-    `product_id`  INT         NULL,
-    `primary`     INT         NOT NULL,
-    UNIQUE INDEX `id` (`id` ASC),
-    PRIMARY KEY (`id`),
-    CONSTRAINT fk_images_category_id_categories_id
-        FOREIGN KEY (`category_id`)
-            REFERENCES `shop_hib`.`categories` (`id`)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE,
-    CONSTRAINT fk_images_product_id_products_id
-        FOREIGN KEY (`product_id`)
-            REFERENCES `shop_hib`.`products` (`id`)
             ON DELETE CASCADE
             ON UPDATE CASCADE
 );

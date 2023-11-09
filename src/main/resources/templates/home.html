@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>
+        Домашняя страница
+    </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-light">
+    <div class="container-fluid">
+        <div class="files">
+            <form th:method="POST" th:action="@{/home/upload}" enctype="multipart/form-data"
+                  class="file-import">
+                <label class="label">
+                    <input id="file" name="file" type="file" class="title" accept=".csv">
+                </label>
+                <br>
+                <button type="submit" class="btn btn-outline-success m-1">Добавить из файла
+                </button>
+            </form>
+            <a th:href="@{/home/download}">
+                <button class="btn btn-outline-success m-1" type="button">Загрузить в файл</button>
+            </a>
+        </div>
+        <form class="form-inline my-2 my-lg-0">
+            <a th:href="@{/search}">
+                <button class="btn btn-outline-success m-1" type="button">Поиск</button>
+            </a>
+            <a th:href="@{/account}">
+                <button class="btn btn-outline-success m-1" type="button">Кабинет</button>
+            </a>
+            <a th:href="@{/cart/open}">
+                <button class="btn btn-outline-success m-1" type="button">Корзина</button>
+            </a>
+        </form>
+    </div>
+</nav>
+<p></p>
+<h1 style="text-align: center">Каталог товаров</h1>
+<p></p>
+<div class="container-fluid">
+    <div th:if="${categories!=null}">
+        <div class="row">
+            <div class="card w-25 m-1" style="text-align: center" th:each=" c : ${categories}">
+                <div class="card-body">
+                    <a th:href="@{'category/'+${c.getId()}}">
+                        <img th:src="@{${'/images/' + c.imagePath}}" width="160px" height="160px" alt="Category image">
+                    </a>
+                    <br>
+                    <a th:href="@{'category/'+${c.getId()}}"
+                       class="btn" th:text="${c.getName()}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

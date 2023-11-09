@@ -1,6 +1,7 @@
 package by.teachmeskills.springbootproject.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -33,8 +34,8 @@ public class Order extends BaseEntity {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany
-    @JoinTable(name="orders_products", joinColumns = @JoinColumn(name = "order_id"),
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "orders_products", joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> productList;
 }

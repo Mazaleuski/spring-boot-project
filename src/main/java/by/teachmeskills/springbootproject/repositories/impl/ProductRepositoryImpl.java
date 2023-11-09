@@ -25,6 +25,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     private static final String GET_ALL_PRODUCTS = "select p from Product p";
     private static final String GET_PRODUCT_BY_NAME_OR_DESCRIPTION =
             "from Product where name like :search or description like :search";
+    private static final String GET_PRODUCT_BY_NAME = "select p from Product p where p.name=:name";
     private static final String GET_PRODUCTS_BY_CATEGORY_ID = "select p from Product p where p.category.id=:categoryId";
 
     @Override
@@ -67,5 +68,12 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public void delete(Product entity) {
         entityManager.remove(entity);
+    }
+
+    @Override
+    public Product findByName(String name) {
+        TypedQuery<Product> query = entityManager.createQuery(GET_PRODUCT_BY_NAME, Product.class);
+        query.setParameter("name", name);
+        return query.getSingleResult();
     }
 }
