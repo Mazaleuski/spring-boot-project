@@ -3,10 +3,12 @@ package by.teachmeskills.springbootproject.services.impl;
 import by.teachmeskills.springbootproject.csv.ProductCsv;
 import by.teachmeskills.springbootproject.csv.converters.ProductConverter;
 import by.teachmeskills.springbootproject.entities.Product;
-import by.teachmeskills.springbootproject.entities.SearchCriteria;
+import by.teachmeskills.springbootproject.entities.SearchParams;
 import by.teachmeskills.springbootproject.repositories.ProductRepository;
+import by.teachmeskills.springbootproject.repositories.ProductSearchSpecification;
 import by.teachmeskills.springbootproject.services.CategoryService;
 import by.teachmeskills.springbootproject.services.ProductService;
+import by.teachmeskills.springbootproject.utils.PageUtil;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -14,8 +16,13 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,17 +52,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ModelAndView create(Product entity) {
+        Product product = productRepository.findById(entity.getId()).orElseThrow(() -> new EntityExistsException("Product exists!"));
+        productRepository.save(product);
         return new ModelAndView();
     }
 
     @Override
     public List<Product> read() {
-        return productRepository.read();
+        return productRepository.findAll();
     }
 
     @Override
     public Product update(Product entity) {
-        return productRepository.update(entity);
+        return productRepository.save(entity);
     }
 
     @Override
@@ -65,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findById(int id) {
-        return productRepository.findById(id);
+        return productRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -74,17 +83,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ModelAndView findByNameOrDescription(SearchCriteria searchCriteria) {
-        if (searchCriteria.getPaginationNumber() < 1) {
-            searchCriteria.setPaginationNumber(1);
-        }
+    public ModelAndView findByNameOrDescription(SearchParams searchParams, int pageNumber, int pageSize) {
         ModelMap modelParam = new ModelMap();
         modelParam.addAttribute(CATEGORIES, categoryService.read());
-        if (searchCriteria.getSearchString() != null) {
-            if (searchCriteria.getSearchString().length() < 3) {
+        if (searchParams.getSearchKey() != null) {
+            if (searchParams.getSearchKey().length() < 3) {
                 modelParam.addAttribute("info", "Не менее трех символов для поиска!");
             } else {
-                List<Product> productList = productRepository.findByNameOrDescription(searchCriteria);
+                Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by("name").ascending());
+                ProductSearchSpecification productSearchSpecification = new ProductSearchSpecification(searchParams);
+                Page<Product> page = productRepository.findAll(productSearchSpecification, paging);
+                modelParam = PageUtil.addAttributesFromPage(page, pageNumber, pageSize);
+                List<Product> productList = page.getContent();
                 if (productList.size() != 0) {
                     modelParam.addAttribute(PRODUCTS, productList);
                 } else {
@@ -123,7 +133,7 @@ public class ProductServiceImpl implements ProductService {
                     .build();
             List<ProductCsv> productsCsv = new ArrayList<>();
             csvToBean.forEach(productsCsv::add);
-            productsCsv.stream().map(productConverter::fromCsv).forEach(productRepository::create);
+            productsCsv.stream().map(productConverter::fromCsv).forEach(productRepository::save);
             return modelAndView;
         }
     }

@@ -1,7 +1,7 @@
 package by.teachmeskills.springbootproject.services;
 
 import by.teachmeskills.springbootproject.entities.Product;
-import by.teachmeskills.springbootproject.entities.SearchCriteria;
+import by.teachmeskills.springbootproject.entities.SearchParams;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +16,7 @@ public interface ProductService extends BaseService<Product> {
 
     List<Product> findByCategoryId(int id);
 
-    ModelAndView findByNameOrDescription(SearchCriteria searchCriteria);
+    ModelAndView findByNameOrDescription(SearchParams searchParams,int pageNumber,int pageSize);
 
     void downloadProductsToFile(HttpServletResponse response, int categoryId)
             throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;

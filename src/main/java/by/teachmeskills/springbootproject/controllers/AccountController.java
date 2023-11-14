@@ -31,8 +31,10 @@ public class AccountController {
     private final OrderService orderService;
 
     @GetMapping
-    public ModelAndView openAccountPage(@SessionAttribute(name = USER, required = false) User user) throws AuthorizationException {
-        return orderService.findUserOrders(user);
+    public ModelAndView openAccountPage(@SessionAttribute(name = USER, required = false) User user,
+                                        @RequestParam(defaultValue = "0") int pageNumber,
+                                        @RequestParam(defaultValue = "1") int pageSize) throws AuthorizationException {
+        return orderService.findUserOrders(user, pageNumber, pageSize);
     }
 
     @GetMapping("/download")

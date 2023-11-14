@@ -18,6 +18,6 @@ public interface ShopConstants {
     String ORDERS = "orders";
     String ERROR = "error";
     String TIME = "time";
-    String SEARCH_CRITERIA = "searchCriteria";
+    String SEARCH_PARAMS = "searchParams";
     String FILE = "file";
 }

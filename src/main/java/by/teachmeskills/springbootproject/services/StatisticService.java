@@ -14,7 +14,7 @@ public class StatisticService {
     public double getTime() {
         StopWatch stopWatch = new StopWatch("App");
         stopWatch.start("App Startup");
-        userRepository.read();
+        userRepository.findAll();
         stopWatch.stop();
         return stopWatch.getTotalTimeSeconds();
     }

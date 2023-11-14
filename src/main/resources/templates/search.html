@@ -28,11 +28,35 @@
     </div>
 </nav>
 <div class="container">
-    <form class="search-form" th:method="POST" th:action="@{/search}"
+    <form class="search-form" th:action="@{/search/paging}"
           style="text-align: center">
-        <label for="searchString"></label>
-        <input type="text" name="searchString" id="searchString" class="span3 w-75"
+        <label for="searchKey"></label>
+        <input name="searchKey" type="search" id="searchKey" th:value="${searchKey}" class="span3 w-75"
                placeholder="Поиск">
+        <div class="row" style="text-align: left"><p></p>
+            <div class="col" style="text-align: center">Фильтр<br><br>
+                <div class="form-group">
+                    <label for="categoryName"></label>
+                    <select id="categoryName" name="categoryName">
+                        <div th:each="c:${categories}">
+                            <option style="text-align: center" th:text="${c.getName()}"
+                                    th:value="${c.getName()}"></option>
+                        </div>
+                    </select>
+                </div>
+                <p></p>
+                <div class="form-group ">
+                    <label>
+                        <input th:type="text" id="priceFrom" placeholder="Цена от" name="priceFrom" value="0">
+                    </label>
+                    <p></p>
+                    <label>
+                        <input th:type="text" id="priceTo" placeholder="Цена до" name="priceTo" value="9999">
+                    </label>
+                    <p></p>
+                </div>
+            </div>
+        </div>
         <button type="submit" class="btn btn-success">Найти</button>
     </form>
     <p></p>
@@ -40,82 +64,71 @@
         <p style="text-align: center" class="text-danger" th:text="${info}"></p>
         <p></p>
     </div>
-</div>
-<br>
-<div class="row"><p></p>
-    <div class="col" style="text-align: center">Фильтр<br><br>
-        <form th:method="POST" th:action="@{/search}">
-            <div class="form-group">
-                <label for="categories"></label><select id="categories" name="categories">
-                <div th:each="c:${categories}">
-                    <option style="text-align: center" th:text="${c.getName()}"></option>
-                </div>
-            </select>
-            </div>
-            <p></p>
-            <div class="form-group">
-                <label>
-                    <input type="text" id="priceFrom" placeholder="Цена от" name="priceFrom">
-                </label>
+    <br>
+    <div class="row"><p></p>
+        <div class="col" style="text-align: center">Результаты поиска:<br><br>
+            <div th:test="${message}!=null">
+                <p style="text-align: center" class="text" th:text="${message}"></p>
                 <p></p>
-                <label>
-                    <input type="text" id="priceTo" placeholder="Цена до" name="priceTo">
-                </label>
-                <p></p>
-                <div>
-                    <button class="btn btn-success" style="text-align: center">Применить</button>
-                </div>
             </div>
-        </form>
-    </div>
-    <div class="col" style="text-align: center">Результаты поиска:<br><br>
-        <div th:test="${message}!=null">
-            <p style="text-align: center" class="text" th:text="${message}"></p>
-            <p></p>
-        </div>
-        <div th:each="p:${products}">
-            <div class="card w-80 m-1">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col m-1"><a
-                                th:href="'/products/'+${p.getId()}"><img
-                                class="card-img"
-                                style="width:100px;height:100px"
-                                th:src="@{${'/images/' + p.imagePath}}"
-                                alt="Product image"></a></div>
-                        <div class="col m-1" style="text-align: left">
-                            <a th:href="'/products/'+${p.getId()}">
-                                <p th:text="${p.getName()}"></p>
-                            </a>
-                            <p th:text="${p.getDescription()}"></p>
-                            <p th:text="${p.getPrice()}"></p></div>
-                        <div class="col m-1"><br>
-                            <a th:href="'/products/'+${p.getId()}">
-                                <button class="btn btn-outline-success m-2" style="text-align: center" type="button">
-                                    Смотреть
-                                </button>
-                            </a>
+            <div th:each="p:${products}">
+                <div class="card w-80 m-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col m-1"><a
+                                    th:href="'/products/'+${p.getId()}"><img
+                                    class="card-img"
+                                    style="width:100px;height:100px"
+                                    th:src="@{${'/images/' + p.imagePath}}"
+                                    alt="Product image"></a></div>
+                            <div class="col m-1" style="text-align: left">
+                                <a th:href="'/products/'+${p.getId()}">
+                                    <p th:text="${p.getName()}"></p>
+                                </a>
+                                <p th:text="${p.getDescription()}"></p>
+                                <p th:text="${p.getPrice()}"></p></div>
+                            <div class="col m-1"><br>
+                                <a th:href="'/products/'+${p.getId()}">
+                                    <button class="btn btn-outline-success m-2" style="text-align: center"
+                                            type="button">
+                                        Смотреть
+                                    </button>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <br>
         </div>
-        <br>
     </div>
+    <nav aria-label="Page navigation">
+        <div class="dropdown" style="text-align: center">
+            <button type="button" class="btn btn-light" data-toggle="dropdown">
+                Количество
+            </button>
+            <div class="dropdown-menu" style="color: black">
+                <a class="dropdown-item" th:href="@{/search/paging?pageSize=1&pageNumber=0}" style="color: black">1</a>
+                <a class="dropdown-item" th:href="@{/search/paging?pageSize=2&pageNumber=0}" style="color: black">2</a>
+                <a class="dropdown-item" th:href="@{/search/paging?pageSize=3&pageNumber=0}" style="color: black">3</a>
+            </div>
+        </div>
+        <ul class="pagination justify-content-center">
+            <li th:if="${pageNumber le 0}" class="q-pagination-disabled"></li>
+            <li th:if="${pageNumber gt 0}" class="page-item"><a class="page-link"
+                                                                th:href="'paging?pageSize='+${pageSize}+'&pageNumber='+(${pageNumber}-1)"
+                                                                th:text="Previous"></a></li>
+            <div th:each="i : ${totalPages}">
+                <li class="page-item"><a class="page-link" th:href="'paging?pageSize='+${pageSize}+'&pageNumber='+${i}"
+                                         th:text="${i}+1"></a>
+                </li>
+            </div>
+            <li th:if="${pageNumber gt numMov}" class="q-pagination-disabled"></li>
+            <li th:if="${(pageNumber le penNumMov)&&(pageNumber!=null)}" class="page-item"><a class="page-link"
+                                                                                      th:href="'paging?pageSize='+${pageSize}+'&pageNumber='+(${pageNumber}+1)"
+                                                                                      th:text="Next"></a></li>
+        </ul>
+    </nav>
 </div>
-<ul class="pagination justify-content-end" style="margin:20px 0">
-    <div class="dropdown">
-        <button type="button" class="btn btn-outline-success m-1" data-toggle="dropdown">
-            Страница
-        </button>
-        <div class="dropdown-menu" style="color: black">
-            <a class="dropdown-item" th:href="@{/search/1}" style="color: black">1</a>
-            <a class="dropdown-item" th:href="@{/search/2}" style="color: black">2</a>
-            <a class="dropdown-item" th:href="@{/search/3}" style="color: black">3</a>
-        </div>
-    </div>
-    <li class="page-item"><a class="btn btn-outline-success m-1" th:href="@{/search/previous}"><</a></li>
-    <li class="page-item"><a class="btn btn-outline-success m-1" th:href="@{/search/next}">></a></li>
-</ul>
 </body>
 </html>
