@@ -6,19 +6,19 @@ import by.teachmeskills.springbootproject.exceptions.AuthorizationException;
 import by.teachmeskills.springbootproject.exceptions.CartIsEmptyException;
 import by.teachmeskills.springbootproject.services.OrderService;
 import by.teachmeskills.springbootproject.services.ProductService;
+import by.teachmeskills.springbootproject.services.UserService;
+import by.teachmeskills.springbootproject.utils.UserPrincipalUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import static by.teachmeskills.springbootproject.ShopConstants.CART;
 import static by.teachmeskills.springbootproject.ShopConstants.PRODUCT_ID;
-import static by.teachmeskills.springbootproject.ShopConstants.USER;
 import static by.teachmeskills.springbootproject.enums.PagesPathEnum.CART_PAGE;
 
 @RestController
@@ -29,6 +29,7 @@ public class CartController {
 
     private final ProductService productService;
     private final OrderService orderService;
+    private final UserService userService;
 
     @GetMapping("/open")
     public ModelAndView openCartPage() {
@@ -46,7 +47,8 @@ public class CartController {
     }
 
     @GetMapping("/order")
-    public ModelAndView makeOrder(@SessionAttribute(name = USER, required = false) User user, @ModelAttribute(CART) Cart cart) throws CartIsEmptyException, AuthorizationException {
+    public ModelAndView makeOrder(@ModelAttribute(CART) Cart cart) throws CartIsEmptyException, AuthorizationException {
+        User user = userService.findByEmail(UserPrincipalUtil.getEmail());
         return orderService.create(user, cart);
     }
 

@@ -16,6 +16,15 @@
     </style>
 </head>
 <body>
+<nav class="navbar navbar-light">
+    <div class="container-fluid">
+        <form class="form-inline">
+            <a th:href="@{/home}">
+                <button class="btn btn-outline-success" type="button">Главная</button>
+            </a>
+        </form>
+    </div>
+</nav>
 <br>
 <h2 style="text-align:center">Регистрация</h2>
 <p></p>
@@ -25,7 +34,8 @@
         <div style="text-align: center">
             <a th:href="@{/login}">
                 <button class="btn btn-outline-success m-1" type="button">Войти</button>
-            </a></div><br>
+            </a></div>
+        <br>
     </div>
     <div class="row">
         <div class="col-md-8 offset-md-5">

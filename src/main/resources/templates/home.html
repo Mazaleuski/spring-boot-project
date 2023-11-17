@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>
         Домашняя страница
@@ -13,16 +13,28 @@
 <body>
 <nav class="navbar navbar-light">
     <div class="container-fluid">
-        <div class="files">
-            <form th:method="POST" th:action="@{/home/upload}" enctype="multipart/form-data"
-                  class="file-import">
-                <label class="label">
-                    <input id="file" name="file" type="file" class="title" accept=".csv">
-                </label>
-                <br>
-                <button type="submit" class="btn btn-outline-success m-1">Добавить из файла
-                </button>
-            </form>
+        <form class="form-inline my-2 my-lg-0">
+            <a th:href="@{/login}">
+                <button class="btn btn-outline-success m-1" type="button">Вход</button>
+            </a>
+            <a th:href="@{/logout}">
+                <button class="btn btn-outline-danger m-1" type="button">Выход</button>
+            </a>
+            <a th:href="@{/registration}">
+                <button class="btn btn-outline-success m-1" type="button">Регистрация</button>
+            </a></form>
+        <div class="files" style="text-align: center">
+            <div sec:authorize="hasAuthority('ADMIN')">
+                <form th:method="POST" th:action="@{/home/upload}" enctype="multipart/form-data"
+                      class="file-import">
+                    <label class="label">
+                        <input id="file" name="file" type="file" class="title" accept=".csv">
+                    </label>
+                    <br>
+                    <button type="submit" class="btn btn-outline-success m-1">Добавить из файла
+                    </button>
+                </form>
+            </div>
             <a th:href="@{/home/download}">
                 <button class="btn btn-outline-success m-1" type="button">Загрузить в файл</button>
             </a>

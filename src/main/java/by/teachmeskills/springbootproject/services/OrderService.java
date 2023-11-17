@@ -38,7 +38,6 @@ import java.io.Writer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static by.teachmeskills.springbootproject.ShopConstants.ORDERS;
 import static by.teachmeskills.springbootproject.ShopConstants.USER;
@@ -55,17 +54,13 @@ public class OrderService {
     private final OrderConverter orderConverter;
 
     public ModelAndView create(User user, Cart cart) throws CartIsEmptyException, AuthorizationException {
-        if (Optional.ofNullable(user).isEmpty()) {
-            throw new AuthorizationException("Пользователь не авторизован!");
-        }
         if (cart.getTotalPrice() == 0) {
             throw new CartIsEmptyException("Корзина пуста!");
         }
-        User u = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
         Order order = Order.builder().price(cart.getTotalPrice()).date(LocalDate.now())
-                .user(u).productList(cart.getProducts()).build();
-        u.getOrder().add(order);
-        userRepository.save(u);
+                .user(user).productList(cart.getProducts()).build();
+        user.getOrder().add(order);
+        userRepository.save(user);
         orderRepository.save(order);
         cart.clear();
         cart.setTotalPrice(0);
@@ -74,23 +69,14 @@ public class OrderService {
         return modelAndView;
     }
 
-    public ModelAndView findUserOrders(User user,int pageNumber,int pageSize) throws AuthorizationException {
-        ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE.getPath());
+    public ModelAndView findUserOrders(User user, int pageNumber, int pageSize) {
         Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by("id").ascending());
-        if (Optional.ofNullable(user).isPresent()
-                && Optional.ofNullable(user.getEmail()).isPresent()
-                && Optional.ofNullable(user.getPassword()).isPresent()) {
-            User loggedUser = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
-            if (Optional.ofNullable(loggedUser).isPresent()) {
-                Page<Order> page = orderRepository.findByUser(loggedUser,paging);
-                ModelMap modelMap = PageUtil.addAttributesFromPage(page,pageNumber,pageSize);
-                modelMap.addAttribute(USER, loggedUser);
-                modelMap.addAttribute(ORDERS, page.getContent());
-                modelAndView.addAllObjects(modelMap);
-            }
-        } else {
-            throw new AuthorizationException("Пользователь не авторизован!");
-        }
+        Page<Order> page = orderRepository.findByUser(user, paging);
+        ModelMap modelMap = PageUtil.addAttributesFromPage(page, pageNumber, pageSize);
+        modelMap.addAttribute(USER, user);
+        modelMap.addAttribute(ORDERS, page.getContent());
+        ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE.getPath());
+        modelAndView.addAllObjects(modelMap);
         return modelAndView;
     }
 

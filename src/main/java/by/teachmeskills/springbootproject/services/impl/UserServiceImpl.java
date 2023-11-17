@@ -1,21 +1,18 @@
 package by.teachmeskills.springbootproject.services.impl;
 
-import by.teachmeskills.springbootproject.entities.Category;
+import by.teachmeskills.springbootproject.entities.Role;
 import by.teachmeskills.springbootproject.entities.User;
 import by.teachmeskills.springbootproject.exceptions.AuthorizationException;
 import by.teachmeskills.springbootproject.repositories.UserRepository;
-import by.teachmeskills.springbootproject.services.CategoryService;
 import by.teachmeskills.springbootproject.services.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static by.teachmeskills.springbootproject.ShopConstants.CATEGORIES;
-import static by.teachmeskills.springbootproject.enums.PagesPathEnum.HOME_PAGE;
 import static by.teachmeskills.springbootproject.enums.PagesPathEnum.REGISTRATION_PAGE;
 
 @Service
@@ -23,7 +20,7 @@ import static by.teachmeskills.springbootproject.enums.PagesPathEnum.REGISTRATIO
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final CategoryService categoryService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ModelAndView create(User entity) throws AuthorizationException {
@@ -31,6 +28,10 @@ public class UserServiceImpl implements UserService {
         if ((userRepository.findByEmailAndPassword(entity.getEmail(), entity.getPassword())) != null) {
             throw new AuthorizationException("Пользователь уже зарегистрирован. Войдите в систему.");
         } else {
+            entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+            List<Role> roles = new ArrayList<>();
+            roles.add(userRepository.findRoleById(1));
+            entity.setRoles(roles);
             userRepository.save(entity);
             modelAndView.addObject("info", "Пользователь успешно зарегистрирован. Войдите в систему.");
         }
@@ -52,10 +53,10 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(entity);
     }
 
-    @Override
-    public User findByEmailAndPassword(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password);
-    }
+//    @Override
+//    public User findByEmailAndPassword(String email, String password) {
+//        return userRepository.findByEmailAndPassword(email, password);
+//    }
 
     @Override
     public User findById(int id) {
@@ -63,22 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ModelAndView authenticate(User user) throws AuthorizationException {
-        ModelAndView modelAndView = new ModelAndView();
-        ModelMap modelMap = new ModelMap();
-        if (Optional.ofNullable(user).isPresent()
-                && Optional.ofNullable(user.getEmail()).isPresent()
-                && Optional.ofNullable(user.getPassword()).isPresent()) {
-            User loggedUser = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
-            if (Optional.ofNullable(loggedUser).isPresent()) {
-                List<Category> categoriesList = categoryService.read();
-                modelMap.addAttribute(CATEGORIES, categoriesList);
-                modelAndView.setViewName(HOME_PAGE.getPath());
-                modelAndView.addAllObjects(modelMap);
-            } else {
-                throw new AuthorizationException("Пользователь не зарегистрирован!");
-            }
-        }
-        return modelAndView;
+    public User findByEmail(String name) {
+        return userRepository.findByEmail(name).orElse(null);
     }
 }

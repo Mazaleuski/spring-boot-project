@@ -15,7 +15,25 @@
         }
     </style>
 </head>
-<body><h2 style="text-align:center">Вход</h2>
+<body>
+<nav class="navbar navbar-light">
+    <div class="container-fluid">
+        <form class="form-inline">
+            <a th:href="@{/home}">
+                <button class="btn btn-outline-success" type="button">Главная</button>
+            </a>
+        </form>
+        <form class="form-inline my-2 my-lg-0">
+            <a th:href="@{/search/paging}">
+                <button class="btn btn-outline-success m-1" type="button">Поиск</button>
+            </a>
+            <a th:href="@{/cart/open}">
+                <button class="btn btn-outline-success m-1" type="button">Корзина</button>
+            </a>
+        </form>
+    </div>
+</nav>
+<h2 style="text-align:center">Вход</h2>
 <p style="text-align:center">Введите имя пользователя и пароль</p>
 <div class="container">
     <div class="row">
