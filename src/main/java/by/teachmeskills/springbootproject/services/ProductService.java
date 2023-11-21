@@ -16,7 +16,7 @@ public interface ProductService extends BaseService<Product> {
 
     List<Product> findByCategoryId(int id);
 
-    ModelAndView findByNameOrDescription(SearchParams searchParams,int pageNumber,int pageSize);
+    ModelAndView findBySearchParams(SearchParams searchParams, int pageNumber, int pageSize, String param);
 
     void downloadProductsToFile(HttpServletResponse response, int categoryId)
             throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;

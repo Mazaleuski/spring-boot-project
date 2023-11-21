@@ -74,16 +74,16 @@ public class OrderService {
         return modelAndView;
     }
 
-    public ModelAndView findUserOrders(User user,int pageNumber,int pageSize) throws AuthorizationException {
+    public ModelAndView findUserOrders(User user, int pageNumber, int pageSize, String param) throws AuthorizationException {
         ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE.getPath());
-        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by("id").ascending());
+        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(param).ascending());
         if (Optional.ofNullable(user).isPresent()
                 && Optional.ofNullable(user.getEmail()).isPresent()
                 && Optional.ofNullable(user.getPassword()).isPresent()) {
             User loggedUser = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
             if (Optional.ofNullable(loggedUser).isPresent()) {
-                Page<Order> page = orderRepository.findByUser(loggedUser,paging);
-                ModelMap modelMap = PageUtil.addAttributesFromPage(page,pageNumber,pageSize);
+                Page<Order> page = orderRepository.findByUser(loggedUser, paging);
+                ModelMap modelMap = PageUtil.addAttributesFromPage(page, pageNumber, pageSize);
                 modelMap.addAttribute(USER, loggedUser);
                 modelMap.addAttribute(ORDERS, page.getContent());
                 modelAndView.addAllObjects(modelMap);

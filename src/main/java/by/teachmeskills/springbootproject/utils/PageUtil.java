@@ -1,6 +1,7 @@
 package by.teachmeskills.springbootproject.utils;
 
 import by.teachmeskills.springbootproject.entities.BaseEntity;
+import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
 import org.springframework.ui.ModelMap;
 
@@ -8,11 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@UtilityClass
 public final class PageUtil {
-
-    private PageUtil() {
-    }
-
     public static ModelMap addAttributesFromPage(Page<? extends BaseEntity> page, int pageNumber, int pageSize) {
         ModelMap modelParam = new ModelMap();
         List<Integer> pageNumbers = IntStream.rangeClosed(0, page.getTotalPages() - 1)

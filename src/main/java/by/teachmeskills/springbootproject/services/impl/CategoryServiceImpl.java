@@ -119,8 +119,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ModelAndView findAllWithPaging(int pageNumber, int pageSize) {
-        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by("name").ascending());
+    public ModelAndView findAll(int pageNumber, int pageSize, String param) {
+        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(param).ascending());
         Page<Category> page = categoryRepository.findAll(paging);
         ModelMap modelParam = PageUtil.addAttributesFromPage(page, pageNumber, pageSize);
         modelParam.addAttribute(CATEGORIES, page.getContent());
@@ -129,8 +129,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ModelAndView findByIdWithPaging(int id, int pageNumber, int pageSize) {
-        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by("name").ascending());
+    public ModelAndView findById(int id, int pageNumber, int pageSize, String param) {
+        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(param).ascending());
         Page<Product> page = productRepository.findAllByCategoryId(id, paging);
         ModelMap modelMap = PageUtil.addAttributesFromPage(page, pageNumber, pageSize);
         modelMap.addAttribute(PRODUCTS, page.getContent());
