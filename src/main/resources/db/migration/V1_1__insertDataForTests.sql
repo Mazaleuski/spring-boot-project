@@ -1,4 +1,5 @@
-USE shop_hib;
+USE
+shop_hib;
 INSERT INTO `shop_hib`.`categories` (`name`, `image_path`, `rating`)
 VALUES ('Мобильные телефоны', 'iphone.jpg', '1');
 INSERT INTO `shop_hib`.`categories` (`name`, `image_path`, `rating`)
