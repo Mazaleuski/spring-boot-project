@@ -15,9 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 
-import static by.teachmeskills.springbootproject.ShopConstants.CATEGORIES;
 import static by.teachmeskills.springbootproject.ShopConstants.FILE;
-import static by.teachmeskills.springbootproject.enums.PagesPathEnum.HOME_PAGE;
 
 @RestController
 @RequestMapping("/home")
@@ -26,9 +24,10 @@ public class HomeController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ModelAndView openHomePage() {
-        ModelAndView modelAndView = new ModelAndView(HOME_PAGE.getPath());
-        return modelAndView.addObject(CATEGORIES, categoryService.read());
+    public ModelAndView openHomePage(@RequestParam(defaultValue = "0") int pageNumber,
+                                     @RequestParam(defaultValue = "6") int pageSize,
+                                     @RequestParam(defaultValue = "name") String param) {
+        return categoryService.findAll(pageNumber, pageSize, param);
     }
 
     @GetMapping("/download")

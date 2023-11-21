@@ -28,7 +28,7 @@
             <a th:href="@{/home}">
                 <button class="btn btn-outline-success m-1" type="button">Главная</button>
             </a>
-            <a th:href="@{/search}">
+            <a th:href="@{/search/paging}">
                 <button class="btn btn-outline-success m-1" type="button">Поиск</button>
             </a>
             <a th:href="@{/account}">
@@ -63,6 +63,33 @@
             </div>
         </div>
     </div>
+    <nav aria-label="Page navigation">
+        <div class="dropdown" style="text-align: center">
+            <button type="button" class="btn btn-light" data-toggle="dropdown">
+                Количество
+            </button>
+            <div class="dropdown-menu" style="color: black">
+                <a class="dropdown-item" th:href="'/category/'+${id}+'/paging?pageSize=1&pageNumber=0'" style="color: black">1</a>
+                <a class="dropdown-item" th:href="'/category/'+${id}+'/paging?pageSize=2&pageNumber=0'" style="color: black">2</a>
+                <a class="dropdown-item" th:href="'/category/'+${id}+'/paging?pageSize=3&pageNumber=0'" style="color: black">3</a>
+            </div>
+        </div>
+        <ul class="pagination justify-content-center">
+            <li th:if="${pageNumber le 0}" class="q-pagination-disabled"></li>
+            <li th:if="${pageNumber gt 0}" class="page-item"><a class="page-link"
+                                                                th:href="'/category/'+${id}+'/paging?pageSize='+${pageSize}+'&pageNumber='+(${pageNumber}-1)"
+                                                                th:text="Previous"></a></li>
+            <div th:each="i : ${totalPages}">
+                <li class="page-item"><a class="page-link" th:href="'/category/'+${id}+'/paging?pageSize='+${pageSize}+'&pageNumber='+${i}"
+                                         th:text="${i}+1"></a>
+                </li>
+            </div>
+            <li th:if="${pageNumber gt numMov}" class="q-pagination-disabled"></li>
+            <li th:if="${(pageNumber le penNumMov)&&(pageNumber!=null)}" class="page-item"><a class="page-link"
+                                                                                              th:href="'/category/'+${id}+'/paging?pageSize='+${pageSize}+'&pageNumber='+(${pageNumber}+1)"
+                                                                                              th:text="Next"></a></li>
+        </ul>
+    </nav>
 </div>
 </body>
 </html>

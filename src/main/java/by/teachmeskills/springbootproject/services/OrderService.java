@@ -9,6 +9,7 @@ import by.teachmeskills.springbootproject.exceptions.AuthorizationException;
 import by.teachmeskills.springbootproject.exceptions.CartIsEmptyException;
 import by.teachmeskills.springbootproject.repositories.OrderRepository;
 import by.teachmeskills.springbootproject.repositories.UserRepository;
+import by.teachmeskills.springbootproject.utils.PageUtil;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -19,6 +20,10 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,10 +61,12 @@ public class OrderService {
         if (cart.getTotalPrice() == 0) {
             throw new CartIsEmptyException("Корзина пуста!");
         }
+        User u = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
         Order order = Order.builder().price(cart.getTotalPrice()).date(LocalDate.now())
-                .user(user).productList(cart.getProducts()).build();
-        userRepository.update(userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword()));
-        orderRepository.create(order);
+                .user(u).productList(cart.getProducts()).build();
+        u.getOrder().add(order);
+        userRepository.save(u);
+        orderRepository.save(order);
         cart.clear();
         cart.setTotalPrice(0);
         ModelAndView modelAndView = new ModelAndView(CART_PAGE.getPath());
@@ -67,23 +74,23 @@ public class OrderService {
         return modelAndView;
     }
 
-    public ModelAndView findUserOrders(User user) throws AuthorizationException {
-        ModelAndView modelAndView = new ModelAndView();
-        ModelMap modelMap = new ModelMap();
+    public ModelAndView findUserOrders(User user, int pageNumber, int pageSize, String param) throws AuthorizationException {
+        ModelAndView modelAndView = new ModelAndView(ACCOUNT_PAGE.getPath());
+        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(param).ascending());
         if (Optional.ofNullable(user).isPresent()
                 && Optional.ofNullable(user.getEmail()).isPresent()
                 && Optional.ofNullable(user.getPassword()).isPresent()) {
             User loggedUser = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
             if (Optional.ofNullable(loggedUser).isPresent()) {
-                List<Order> orders = orderRepository.findByUser(loggedUser);
+                Page<Order> page = orderRepository.findByUser(loggedUser, paging);
+                ModelMap modelMap = PageUtil.addAttributesFromPage(page, pageNumber, pageSize);
                 modelMap.addAttribute(USER, loggedUser);
-                modelMap.addAttribute(ORDERS, orders);
+                modelMap.addAttribute(ORDERS, page.getContent());
                 modelAndView.addAllObjects(modelMap);
             }
         } else {
             throw new AuthorizationException("Пользователь не авторизован!");
         }
-        modelAndView.setViewName(ACCOUNT_PAGE.getPath());
         return modelAndView;
     }
 
@@ -112,7 +119,7 @@ public class OrderService {
                     .build();
             List<OrderCsv> ordersCsv = new ArrayList<>();
             csvToBean.forEach(ordersCsv::add);
-            ordersCsv.stream().map(orderConverter::fromCsv).forEach(orderRepository::create);
+            ordersCsv.stream().map(orderConverter::fromCsv).forEach(orderRepository::save);
         }
         return modelAndView;
     }

@@ -31,6 +31,14 @@ public class CategoryController {
         return categoryService.findById(id);
     }
 
+    @GetMapping("/{id}/paging")
+    public ModelAndView pagedCategories(@PathVariable int id,
+                                        @RequestParam(defaultValue = "0") int pageNumber,
+                                        @RequestParam(defaultValue = "1") int pageSize,
+                                        @RequestParam(defaultValue = "name") String param) {
+        return categoryService.findById(id, pageNumber, pageSize, param);
+    }
+
     @GetMapping("{id}/download")
     public void downloadProductsToFile(@PathVariable int id, HttpServletResponse response)
             throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {

@@ -15,4 +15,8 @@ public interface CategoryService extends BaseService<Category> {
     void downloadCategoriesToFile(HttpServletResponse response) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException;
 
     ModelAndView uploadCategoriesFromFile(MultipartFile file) throws IOException;
+
+    ModelAndView findAll(int pageNumber, int pageSize, String param);
+
+    ModelAndView findById(int id, int pageNumber, int pageSize, String param);
 }

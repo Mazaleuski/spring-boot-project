@@ -29,7 +29,7 @@ public class OrderConverter {
         return Optional.of(orderCsv).map(o -> Order.builder()
                         .price(orderCsv.getPrice())
                         .date(orderCsv.getDate())
-                        .user(userRepository.findById(orderCsv.getUserId()))
+                        .user(userRepository.findById(orderCsv.getUserId()).orElse(null))
                         .productList(listNames.stream().map(productRepository::findByName).toList())
                         .build())
                 .orElse(null);
