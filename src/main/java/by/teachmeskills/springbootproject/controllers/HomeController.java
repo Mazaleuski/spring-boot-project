@@ -24,9 +24,10 @@ public class HomeController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ModelAndView openHomePageWithPaging(@RequestParam(defaultValue = "0") int pageNumber,
-                                               @RequestParam(defaultValue = "6") int pageSize) {
-        return categoryService.findAllWithPaging(pageNumber, pageSize);
+    public ModelAndView openHomePage(@RequestParam(defaultValue = "0") int pageNumber,
+                                     @RequestParam(defaultValue = "6") int pageSize,
+                                     @RequestParam(defaultValue = "name") String param) {
+        return categoryService.findAll(pageNumber, pageSize, param);
     }
 
     @GetMapping("/download")

@@ -69,8 +69,8 @@ public class OrderService {
         return modelAndView;
     }
 
-    public ModelAndView findUserOrders(User user, int pageNumber, int pageSize) {
-        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by("id").ascending());
+    public ModelAndView findUserOrders(User user, int pageNumber, int pageSize, String param) {
+        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(param).ascending());
         Page<Order> page = orderRepository.findByUser(user, paging);
         ModelMap modelMap = PageUtil.addAttributesFromPage(page, pageNumber, pageSize);
         modelMap.addAttribute(USER, user);

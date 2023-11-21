@@ -32,10 +32,11 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}/paging")
-    public ModelAndView CategoryPageWithPaging(@PathVariable int id,
-                                               @RequestParam(defaultValue = "0") int pageNumber,
-                                               @RequestParam(defaultValue = "1") int pageSize) {
-        return categoryService.findByIdWithPaging(id, pageNumber, pageSize);
+    public ModelAndView pagedCategories(@PathVariable int id,
+                                        @RequestParam(defaultValue = "0") int pageNumber,
+                                        @RequestParam(defaultValue = "1") int pageSize,
+                                        @RequestParam(defaultValue = "name") String param) {
+        return categoryService.findById(id, pageNumber, pageSize, param);
     }
 
     @GetMapping("{id}/download")

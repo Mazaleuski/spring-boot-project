@@ -34,9 +34,10 @@ public class AccountController {
 
     @GetMapping
     public ModelAndView openAccountPage(@RequestParam(defaultValue = "0") int pageNumber,
-                                        @RequestParam(defaultValue = "1") int pageSize) throws AuthorizationException {
+                                        @RequestParam(defaultValue = "1") int pageSize,
+                                        @RequestParam(defaultValue = "id") String param) throws AuthorizationException {
         User user = userService.findByEmail(UserPrincipalUtil.getEmail());
-        return orderService.findUserOrders(user, pageNumber, pageSize);
+        return orderService.findUserOrders(user, pageNumber, pageSize, param);
     }
 
     @GetMapping("/download")

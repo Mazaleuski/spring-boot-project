@@ -16,7 +16,7 @@ public interface CategoryService extends BaseService<Category> {
 
     ModelAndView uploadCategoriesFromFile(MultipartFile file) throws IOException;
 
-    ModelAndView findAllWithPaging(int pageNumber, int pageSize);
+    ModelAndView findAll(int pageNumber, int pageSize, String param);
 
-    ModelAndView findByIdWithPaging(int id, int pageNumber, int pageSize);
+    ModelAndView findById(int id, int pageNumber, int pageSize, String param);
 }

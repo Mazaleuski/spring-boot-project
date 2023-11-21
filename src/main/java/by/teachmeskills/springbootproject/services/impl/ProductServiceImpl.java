@@ -83,14 +83,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ModelAndView findByNameOrDescription(SearchParams searchParams, int pageNumber, int pageSize) {
+    public ModelAndView findBySearchParams(SearchParams searchParams, int pageNumber, int pageSize, String param) {
         ModelMap modelParam = new ModelMap();
-        modelParam.addAttribute(CATEGORIES, categoryService.read());
         if (searchParams.getSearchKey() != null) {
             if (searchParams.getSearchKey().length() < 3) {
                 modelParam.addAttribute("info", "Не менее трех символов для поиска!");
             } else {
-                Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by("name").ascending());
+                Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(param).ascending());
                 ProductSearchSpecification productSearchSpecification = new ProductSearchSpecification(searchParams);
                 Page<Product> page = productRepository.findAll(productSearchSpecification, paging);
                 modelParam = PageUtil.addAttributesFromPage(page, pageNumber, pageSize);
@@ -102,6 +101,7 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
         }
+        modelParam.addAttribute(CATEGORIES, categoryService.read());
         return new ModelAndView(SEARCH_PAGE.getPath(), modelParam);
     }
 

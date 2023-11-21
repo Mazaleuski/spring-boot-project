@@ -22,10 +22,11 @@ public class SearchController {
     private final ProductService productService;
 
     @GetMapping("/paging")
-    public ModelAndView searchWithPaging(@ModelAttribute(SEARCH_PARAMS) SearchParams searchParams,
-                                         @RequestParam(defaultValue = "0") int pageNumber,
-                                         @RequestParam(defaultValue = "1") int pageSize) {
-        return productService.findByNameOrDescription(searchParams, pageNumber, pageSize);
+    public ModelAndView search(@ModelAttribute(SEARCH_PARAMS) SearchParams searchParams,
+                               @RequestParam(defaultValue = "0") int pageNumber,
+                               @RequestParam(defaultValue = "1") int pageSize,
+                               @RequestParam(defaultValue = "name") String param) {
+        return productService.findBySearchParams(searchParams, pageNumber, pageSize, param);
     }
 
     @ModelAttribute(SEARCH_PARAMS)

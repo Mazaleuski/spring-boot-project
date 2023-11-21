@@ -53,11 +53,6 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(entity);
     }
 
-//    @Override
-//    public User findByEmailAndPassword(String email, String password) {
-//        return userRepository.findByEmailAndPassword(email, password);
-//    }
-
     @Override
     public User findById(int id) {
         return userRepository.findById(id).orElse(null);
